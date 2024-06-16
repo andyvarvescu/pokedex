@@ -1,16 +1,12 @@
 "use client";
-import { useState } from "react";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
+import { useFilterContext } from "@/store/FilterContext";
 
-export default function TypeDropdown() {
-  const [filterType, setFilterType] = useState("");
-
-  const handleTypeChange = (event) => {
-    setFilterType(event.target.value);
-  };
+export default function TypeFilter({ values }) {
+  const { pokemonType, setPokemonType } = useFilterContext();
 
   return (
     <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
@@ -18,16 +14,17 @@ export default function TypeDropdown() {
       <Select
         labelId="filter-by-type-label"
         id="filter-by-type"
-        value={filterType}
+        value={pokemonType}
         label="Select Type"
-        onChange={handleTypeChange}
+        onChange={(e) => setPokemonType(e.target.value)}
       >
         <MenuItem value="">
           <em>None</em>
         </MenuItem>
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
+
+        {values.map((pokemon) => (
+          <MenuItem value={pokemon.name}>{pokemon.name}</MenuItem>
+        ))}
       </Select>
     </FormControl>
   );

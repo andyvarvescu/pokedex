@@ -12,16 +12,14 @@ export default function PokemonsList({ pokemons }) {
       sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
     >
       {pokemons.map((pokemon) => (
-        <>
-          <ListItem alignItems="flex-start">
-            <ListItemButton>
-              <ListItemAvatar>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-              </ListItemAvatar>
-              <ListItemText primary={pokemon.name} />
-            </ListItemButton>
-          </ListItem>
-        </>
+        <ListItem key={pokemon.name} alignItems="flex-start">
+          <ListItemButton>
+            <ListItemAvatar>
+              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+            </ListItemAvatar>
+            <ListItemText primary={pokemon.name} />
+          </ListItemButton>
+        </ListItem>
       ))}
     </List>
   );
