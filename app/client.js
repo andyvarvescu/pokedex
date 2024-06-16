@@ -6,9 +6,12 @@ import Stack from "@mui/material/Stack";
 import NameFilter from "@/components/name-filter";
 import TypeFilter from "@/components/type-filter";
 import PokemonsList from "@/components/pokemons-list";
+import { useFilterContext } from "@/store/FilterContext";
 
-export default function Client({ data }) {
-  const [pokemons, setPokemons] = useState(data);
+export default function Client({ pokemons, types }) {
+  const [pokemonList, setPokemonList] = useState(pokemons);
+  const { pokemonName, setPokemonName, pokemonType, setPokemonType } =
+    useFilterContext();
 
   return (
     <>
@@ -17,9 +20,13 @@ export default function Client({ data }) {
       </Typography>
 
       <Stack direction="row" spacing={3}>
-        <NameFilter />
-        <TypeFilter values={pokemons} />
-        <PokemonsList pokemons={pokemons} />
+        <NameFilter value={pokemonName} onChange={setPokemonName} />
+        <TypeFilter
+          types={types}
+          value={pokemonType}
+          onChange={setPokemonType}
+        />
+        <PokemonsList pokemons={pokemonList} />
       </Stack>
     </>
   );

@@ -1,10 +1,11 @@
 import "@fontsource/roboto/400.css";
 
-import { getPokemons } from "@/client/pokemons";
+import { getPokemons, getTypes } from "@/client/pokemons";
 import Client from "./client";
 
 export default async function Page() {
-  const data = await getPokemons();
+  const pokemons = await getPokemons();
+  const types = await getTypes();
 
-  return <Client data={data}></Client>;
+  return <Client pokemons={pokemons} types={types}></Client>;
 }
