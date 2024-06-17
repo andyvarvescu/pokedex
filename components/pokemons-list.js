@@ -4,24 +4,27 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
+import Link from "next/link";
 
 export default function PokesList({ pokes }) {
-  console.log("pokes LIST = ", pokes);
-
   return (
     <List
       dense
       sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
     >
       {pokes.map((poke) => (
-        <ListItem key={poke.name} alignItems="flex-start">
-          <ListItemButton>
-            <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src={poke.sprite} />
-            </ListItemAvatar>
-            <ListItemText primary={poke.name} />
-          </ListItemButton>
-        </ListItem>
+        <Link href={`/poke-details/${poke.name}`}>
+          <ListItem key={poke.name} alignItems="flex-center">
+            <ListItemButton style={{ justifyContent: "center" }}>
+              <ListItemAvatar>
+                <Avatar alt="Remy Sharp" src={poke.sprite} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={poke.name.charAt(0).toUpperCase() + poke.name.slice(1)}
+              />
+            </ListItemButton>
+          </ListItem>
+        </Link>
       ))}
     </List>
   );

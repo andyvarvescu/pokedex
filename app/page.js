@@ -4,8 +4,8 @@ import { getPokemons, getTypes } from "@/client/pokemons";
 import Client from "./client";
 
 export default async function Page() {
-  const pokemons = await getPokemons();
+  const pokes = await getPokemons();
   const types = await getTypes();
 
-  return <Client pokemons={pokemons} types={types}></Client>;
+  return <Client pokes={pokes} types={types}></Client>;
 }

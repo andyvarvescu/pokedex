@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-const defaultState = { pokemonName: "", pokemonType: "" };
+const defaultState = { pokeName: "", pokeType: "" };
 const FilterContext = createContext(defaultState);
 
 export const useFilterContext = () => {
@@ -9,16 +9,16 @@ export const useFilterContext = () => {
 };
 
 export default function FiltersContext({ children }) {
-  const [pokemonName, setPokemonName] = useState("");
-  const [pokemonType, setPokemonType] = useState("");
+  const [pokeName, setPokeName] = useState("");
+  const [pokeType, setPokeType] = useState("");
 
   return (
     <FilterContext.Provider
       value={{
-        pokemonName,
-        pokemonType,
-        setPokemonName,
-        setPokemonType,
+        pokeName,
+        pokeType,
+        setPokeName,
+        setPokeType,
       }}
     >
       {children}

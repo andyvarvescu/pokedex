@@ -16,7 +16,7 @@ export async function getTypes() {
 
 export async function getPokesByNameAndType(name, type, offset, limit) {
   const api = new PokemonClient();
-  let filteredPokes;
+  let filteredPokes, totalCount;
 
   if (type) {
     filteredPokes = await api
@@ -32,6 +32,8 @@ export async function getPokesByNameAndType(name, type, offset, limit) {
       pokemon.name.includes(name)
     );
   }
+  totalCount = filteredPokes.length;
+
   filteredPokes = filteredPokes.slice(offset, offset + limit);
   console.log("filteredPokes = ", filteredPokes);
 
@@ -42,7 +44,7 @@ export async function getPokesByNameAndType(name, type, offset, limit) {
     })
   );
 
-  return filteredPokes;
+  return { filteredPokes, totalCount };
 }
 
 export async function getSpriteByName(name) {

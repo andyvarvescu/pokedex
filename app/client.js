@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import CircularProgress from "@mui/material/CircularProgress";
 
 import NameFilter from "@/components/name-filter";
 import TypeFilter from "@/components/type-filter";
@@ -11,34 +10,49 @@ import PokesList from "@/components/pokemons-list";
 import { useFilterContext } from "@/store/FilterContext";
 import { getPokesByNameAndType } from "@/client/pokemons";
 
-export default function Client({ pokemons, types }) {
-  const [pokemonList, setPokemonList] = useState(pokemons);
-  const { pokemonName, setPokemonName, pokemonType, setPokemonType } =
-    useFilterContext();
+export default function Client({ pokes, types }) {
+  const [pokeList, setPokeList] = useState(pokes);
+  const { pokeName, setPokeName, pokeType, setPokeType } = useFilterContext();
   const [fetchOptions, setFetchOptions] = useState({
     fetchCallNo: 0,
     fetchedAll: false,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [marginReached, setMarginReached] = useState(true);
   const loadingTriggerRef = useRef();
 
   const getFilteredPokes = async () => {
-    const filteredPokes = await getPokesByNameAndType(
-      pokemonName,
-      pokemonType,
+    const { filteredPokes, totalCount } = await getPokesByNameAndType(
+      pokeName,
+      pokeType,
       fetchOptions.fetchCallNo * 15,
       15
     );
     setIsLoading(false);
-    setPokemonList(filteredPokes);
+    if (fetchOptions.fetchCallNo === 0) {
+      setPokeList(filteredPokes);
+    } else {
+      setPokeList((previousPokeList) => [
+        ...previousPokeList,
+        ...filteredPokes,
+      ]);
+    }
+
+    if (fetchOptions.fetchCallNo + 15 >= totalCount) {
+      setFetchOptions((prevState) => ({
+        ...prevState,
+        fetchedAll: true,
+      }));
+    }
   };
 
   useEffect(() => {
+    console.log("fetchOptions CHANGED");
     setIsLoading(true);
     getFilteredPokes();
-  }, [pokemonName, pokemonType, fetchOptions]);
+  }, [pokeName, pokeType, fetchOptions]);
 
-  const handleLoading = () => {
+  const handleMarginReached = () => {
     if (!fetchOptions.fetchedAll) {
       setFetchOptions((prevState) => ({
         ...prevState,
@@ -48,8 +62,9 @@ export default function Client({ pokemons, types }) {
   };
 
   useEffect(() => {
+    setTimeout(() => setMarginReached(false), 500);
     if (loadingTriggerRef.current) {
-      const observer = new IntersectionObserver(handleLoading);
+      const observer = new IntersectionObserver(handleMarginReached);
       observer.observe(loadingTriggerRef.current);
 
       return () => {
@@ -70,15 +85,16 @@ export default function Client({ pokemons, types }) {
         spacing={3}
       >
         <Stack direction="row" spacing={3}>
-          <NameFilter value={pokemonName} onChange={setPokemonName} />
-          <TypeFilter
-            types={types}
-            value={pokemonType}
-            onChange={setPokemonType}
-          />
+          <NameFilter value={pokeName} onChange={setPokeName} />
+          <TypeFilter types={types} value={pokeType} onChange={setPokeType} />
         </Stack>
-        <PokesList pokes={pokemonList} />
-        {isLoading && <CircularProgress ref={loadingTriggerRef} />}
+        <PokesList pokes={pokeList} />
+        {
+          <div
+            ref={loadingTriggerRef}
+            className={`${marginReached && "mt-[500px]"} `}
+          ></div>
+        }
       </Stack>
     </>
   );
