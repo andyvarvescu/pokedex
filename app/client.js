@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
+import Container from "@mui/material/Container";
 
 import NameFilter from "@/components/name-filter";
 import TypeFilter from "@/components/type-filter";
@@ -17,46 +18,52 @@ export default function Client({ pokes, types }) {
     fetchCallNo: 0,
     fetchedAll: false,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [totalPokes, setTotalPokes] = useState(0);
   const [marginReached, setMarginReached] = useState(true);
   const loadingTriggerRef = useRef();
 
-  const getFilteredPokes = async () => {
-    const { filteredPokes, totalCount } = await getPokesByNameAndType(
+  const getFilteredPokes = async (filtersChanged) => {
+    const { pokes, totalCount } = await getPokesByNameAndType(
       pokeName,
       pokeType,
       fetchOptions.fetchCallNo * 15,
       15
     );
-    setIsLoading(false);
+    setTotalPokes(totalCount);
+
     if (fetchOptions.fetchCallNo === 0) {
-      setPokeList(filteredPokes);
+      setPokeList(pokes);
     } else {
-      setPokeList((previousPokeList) => [
-        ...previousPokeList,
-        ...filteredPokes,
-      ]);
+      setPokeList((previousPokeList) => [...previousPokeList, ...pokes]);
     }
 
-    if (fetchOptions.fetchCallNo + 15 >= totalCount) {
-      setFetchOptions((prevState) => ({
-        ...prevState,
-        fetchedAll: true,
-      }));
+    if (filtersChanged) {
+      setFetchOptions({
+        fetchCallNo: 0,
+        fetchedAll: false,
+      });
     }
   };
 
   useEffect(() => {
-    console.log("fetchOptions CHANGED");
-    setIsLoading(true);
-    getFilteredPokes();
-  }, [pokeName, pokeType, fetchOptions]);
+    getFilteredPokes(true);
+  }, [pokeName, pokeType]);
+
+  useEffect(() => {
+    getFilteredPokes(false);
+  }, [fetchOptions]);
 
   const handleMarginReached = () => {
     if (!fetchOptions.fetchedAll) {
       setFetchOptions((prevState) => ({
         ...prevState,
         fetchCallNo: prevState.fetchCallNo + 1,
+      }));
+    }
+    if (fetchOptions.fetchCallNo * 15 >= totalPokes) {
+      setFetchOptions((prevState) => ({
+        ...prevState,
+        fetchedAll: true,
       }));
     }
   };
@@ -73,8 +80,16 @@ export default function Client({ pokes, types }) {
     }
   }, [loadingTriggerRef]);
 
+  const handleNameChange = (name) => {
+    setPokeName(name);
+  };
+
+  const handleTypeChange = (type) => {
+    setPokeType(type);
+  };
+
   return (
-    <>
+    <Container maxWidth="md">
       <Typography variant="h4" gutterBottom>
         Pokedex
       </Typography>
@@ -85,8 +100,12 @@ export default function Client({ pokes, types }) {
         spacing={3}
       >
         <Stack direction="row" spacing={3}>
-          <NameFilter value={pokeName} onChange={setPokeName} />
-          <TypeFilter types={types} value={pokeType} onChange={setPokeType} />
+          <NameFilter value={pokeName} onChange={handleNameChange} />
+          <TypeFilter
+            types={types}
+            value={pokeType}
+            onChange={handleTypeChange}
+          />
         </Stack>
         <PokesList pokes={pokeList} />
         {
@@ -96,6 +115,6 @@ export default function Client({ pokes, types }) {
           ></div>
         }
       </Stack>
-    </>
+    </Container>
   );
 }

@@ -1,21 +1,20 @@
 import { PokemonClient } from "pokenode-ts";
 
+const api = new PokemonClient();
+
 export async function getPokemons() {
-  const api = new PokemonClient();
   const pokemons = await api.listPokemons(0, -1).then((data) => data.results);
 
   return pokemons;
 }
 
 export async function getTypes() {
-  const api = new PokemonClient();
   const types = await api.listTypes(0).then((data) => data.results);
 
   return types;
 }
 
 export async function getPokesByNameAndType(name, type, offset, limit) {
-  const api = new PokemonClient();
   let filteredPokes, totalCount;
 
   if (type) {
@@ -35,7 +34,6 @@ export async function getPokesByNameAndType(name, type, offset, limit) {
   totalCount = filteredPokes.length;
 
   filteredPokes = filteredPokes.slice(offset, offset + limit);
-  console.log("filteredPokes = ", filteredPokes);
 
   filteredPokes = await Promise.all(
     filteredPokes.map(async (pokemon) => {
@@ -44,14 +42,28 @@ export async function getPokesByNameAndType(name, type, offset, limit) {
     })
   );
 
-  return { filteredPokes, totalCount };
+  return { pokes: filteredPokes, totalCount };
 }
 
 export async function getSpriteByName(name) {
-  const api = new PokemonClient();
-
   const pokemon = await api.getPokemonByName(name).then((data) => data);
-  const spriteSrc = pokemon.sprites.other["official-artwork"]["front_default"];
+  const spriteSrc = pokemon.sprites.other["official-artwork"].front_default;
 
   return spriteSrc;
+}
+
+export async function getPokeByName(name) {
+  const pokemon = await api.getPokemonByName(name).then((data) => data);
+
+  return pokemon;
+}
+
+export async function getAbilityById(id) {
+  const ability = await api.getAbilityById(id).then((data) => data);
+
+  for (let effect of ability.effect_entries) {
+    if (effect.language.name === "en") {
+      return effect.effect;
+    }
+  }
 }

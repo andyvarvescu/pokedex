@@ -13,8 +13,8 @@ export default function PokesList({ pokes }) {
       sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
     >
       {pokes.map((poke) => (
-        <Link href={`/poke-details/${poke.name}`}>
-          <ListItem key={poke.name} alignItems="flex-center">
+        <Link href={`/poke-details/${poke.name}`} key={poke.name}>
+          <ListItem alignItems="flex-center">
             <ListItemButton style={{ justifyContent: "center" }}>
               <ListItemAvatar>
                 <Avatar alt="Remy Sharp" src={poke.sprite} />
