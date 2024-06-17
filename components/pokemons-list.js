@@ -5,19 +5,21 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 
-export default function PokemonsList({ pokemons }) {
+export default function PokesList({ pokes }) {
+  console.log("pokes LIST = ", pokes);
+
   return (
     <List
       dense
       sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
     >
-      {pokemons.map((pokemon) => (
-        <ListItem key={pokemon.name} alignItems="flex-start">
+      {pokes.map((poke) => (
+        <ListItem key={poke.name} alignItems="flex-start">
           <ListItemButton>
             <ListItemAvatar>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+              <Avatar alt="Remy Sharp" src={poke.sprite} />
             </ListItemAvatar>
-            <ListItemText primary={pokemon.name} />
+            <ListItemText primary={poke.name} />
           </ListItemButton>
         </ListItem>
       ))}
